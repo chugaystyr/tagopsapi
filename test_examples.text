@@ -1,0 +1,13 @@
+#values to e used for tetsig
+'TagopsSecret: 123'
+'TagopsBucket: 123'
+
+
+
+curl --location --request POST 'localhost:5000/tag' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json' --data '{"jval":{"test":1}, "val": "some text"}'
+
+
+curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+
+
+curl --location --request GET 'localhost:5000/user/tags' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
