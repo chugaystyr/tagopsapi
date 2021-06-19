@@ -8,6 +8,8 @@ app = Flask(__name__)
 
 # create database object
 db = DB()
+LIMIT = 10
+OFFSET = 0
 
 def authorize(request):
     if not 'TagopsSecret' in request.headers or not 'TagopsBucket' in request.headers :
@@ -18,6 +20,7 @@ def authorize(request):
 
     abort(401) if not tagopsBucket or int(tagopsBucket) != 123 else ''
     abort(401) if not tagopsSecret or int(tagopsSecret) != 123 else ''
+    db.buked_id = tagopsBucket
     return  tagopsBucket, tagopsSecret
 
 
@@ -47,14 +50,17 @@ def tag_details(tag_id):
 @app.route("/user/tags", methods=["GET"])
 def tag_list():
     tagopsBucket, tagopsSecret = authorize(request)
-    rows = db.get_tag_list()
+    limit = request.args.get("limit", LIMIT)
+    offset = request.args.get("offset", OFFSET)
+    rows = db.get_tag_list(limit, offset)
+    print(rows)
     response_list = []
     for row in rows:
         response_list.append(genrate_dict(row))
+    if len(response_list):
         return jsonify(response_list), 200
     else:
         return jsonify({'messsage':"No data found"}), 200
-
 
 def genrate_dict(row):
     _dict = {}

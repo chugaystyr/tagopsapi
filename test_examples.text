@@ -11,3 +11,10 @@ curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 123
 
 
 curl --location --request GET 'localhost:5000/user/tags' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+
+
+curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+
+
+curl --location --request GET 'localhost:5000/user/tags?limit=1&offset=2' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+
