@@ -1,28 +1,30 @@
 import psycopg2
 from datetime import datetime
 import json
+import os
 
 
 class DB:
 
 	def __init__(self):
 		self.conn = psycopg2.connect(
-							host="localhost",
-							database="tags",
-							user="postgres",
-							password="root")
+							host=os.getenv('PG_HOST', 'localhost'),
+							database=os.getenv('PG_DATABASE', 'tags'),
+							user=os.getenv('PG_USER', 'postgres'),
+							password=os.getenv('PG_PASSWORD', 'root'))
 
 		self.buked_id = None
 
 
 	def inset(self, tagopsSecret, tagopsBucket, data):
 		now = datetime.now().strftime("%Y-%m-%d")
-		query = f"""INSERT INTO tags (created, jval, val, usersecret, userbucket) VALUES ('{now}', '{json.dumps(data['jval'])}', '{data['val']}', {tagopsSecret}, '{tagopsBucket}');"""
+		query = f"""INSERT INTO tags (created, jval, val, usersecret, userbucket) VALUES ('{now}', '{json.dumps(data['jval'])}', '{data['val']}', {tagopsSecret}, '{tagopsBucket}') RETURNING id;"""
 		cur = self.conn.cursor()
 		try:
 			cur.execute(query)
+			id = cur.fetchone()
 			self.conn.commit()
-			return True
+			return id
 		except Exception as e:
 			print(str(e))
 		return False

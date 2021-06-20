@@ -29,8 +29,12 @@ def create_tag():
     tagopsBucket, tagopsSecret = authorize(request)
     res_json = request.data.decode('utf8').replace("'", '"')
     data = json.loads(res_json)
-    if db.inset(int(tagopsSecret), int(tagopsBucket), data):
-        return jsonify({'message':'Tag created.'}), 201
+    tag_id = db.inset(int(tagopsSecret), int(tagopsBucket), data)
+    if tag_id:
+        res = db.get_tag(tag_id[0])
+        context = genrate_dict(res)
+        context['message'] = "Tag created!"
+        return jsonify(context), 201
     else:
         return jsonify({'message':'Tag not created.'}), 500
 
