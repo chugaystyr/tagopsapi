@@ -18,3 +18,12 @@ curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 123
 
 curl --location --request GET 'localhost:5000/user/tags?limit=1&offset=2' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
 
+
+curl --location --request POST 'localhost:5000/users' --header 'Content-Type: application/json'  --data '{"email":"test@test.com", "password":"password"}'
+
+{'id': 7, 'email': 'test7@test.com', 'tagopssecret': '29831127367749349967d6e305eeae77', 'tagopsbucket': 'de72bff6732c4074826c4c2c2c4cf20a', 'created': datetime.datetime(2021, 6, 23, 0, 0)}
+
+
+curl --location --request GET 'localhost:5000/user/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+
+

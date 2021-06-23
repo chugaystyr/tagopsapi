@@ -41,3 +41,23 @@ class DB:
 		cur = self.conn.cursor()
 		cur.execute(query)
 		return cur.fetchall()
+
+	def insert_user(self, data):
+		now = datetime.now().strftime("%Y-%m-%d")
+		query = f"""INSERT INTO users (email, password, tagopssecret, tagopsbucket, created) VALUES ('{data["email"]}', '{data["password"]}', '{data["tagopssecret"]}', '{data["tagopsbucket"]}', '{now}') RETURNING id;"""
+		cur = self.conn.cursor()
+		try:
+			cur.execute(query)
+			id = cur.fetchone()
+			self.conn.commit()
+			return id
+		except Exception as e:
+			print(str(e))
+		return False
+
+	def get_user(self, user_id):
+		query = f"""SELECT id, email, tagopssecret, tagopsbucket, created from users where id = {int(user_id)}"""
+		cur = self.conn.cursor()
+		cur.execute(query)
+		res = cur.fetchone()
+		return res

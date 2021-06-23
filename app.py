@@ -3,6 +3,9 @@ from flask import Flask, request, jsonify, abort
 from functools import wraps
 from db import DB
 import json
+import uuid
+import hashlib
+
 
 app = Flask(__name__)
 
@@ -10,6 +13,9 @@ app = Flask(__name__)
 db = DB()
 LIMIT = 10
 OFFSET = 0
+TAG_FIELDS = ["id", "created", "jval", "val", "usersecret", "userbucket"]
+USER_FIELDS = ["id", "email", "tagopssecret", "tagopsbucket", "created"]
+
 
 def authorize(request):
     if not 'TagopsSecret' in request.headers or not 'TagopsBucket' in request.headers :
@@ -32,7 +38,7 @@ def create_tag():
     tag_id = db.inset(int(tagopsSecret), int(tagopsBucket), data)
     if tag_id:
         res = db.get_tag(tag_id[0])
-        context = genrate_dict(res)
+        context = genrate_dict(TAG_FIELDS, res)
         context['message'] = "Tag created!"
         return jsonify(context), 201
     else:
@@ -45,7 +51,7 @@ def tag_details(tag_id):
     res = db.get_tag(tag_id)
     response = {}
     if res:
-        return jsonify(genrate_dict(res)), 200
+        return jsonify(genrate_dict(TAG_FIELDS, res)), 200
     else:
         return jsonify({'messsage':"No data found"}), 200
 
@@ -60,24 +66,51 @@ def tag_list():
     print(rows)
     response_list = []
     for row in rows:
-        response_list.append(genrate_dict(row))
+        response_list.append(genrate_dict(TAG_FIELDS, row))
     if len(response_list):
         return jsonify(response_list), 200
     else:
         return jsonify({'messsage':"No data found"}), 200
 
-def genrate_dict(row):
+
+def genrate_dict(fields, row):
     _dict = {}
-    _dict.update({'id':row[0]}) if row[0] else ''
-    _dict.update({'created':row[1].strftime("%Y-%m-%d")}) if row[1] else ''
-    _dict.update({'jval':row[2]}) if row[2] else ''
-    _dict.update({'val':row[3]}) if row[3] else ''
-    _dict.update({'usersecret':row[4]}) if row[4] else ''
-    _dict.update({'userbucket':row[5]}) if row[5] else ''
-    return _dict
+    if len(fields) != len(row):
+        return
+    
+    for index in range(len(fields)):
+        _dict[fields[index]] = row[index] if row[index] else ''
+
+    return _dict 
 
 
+@app.route("/users", methods=["POST"])
+def create_user():
+    res_json = request.data.decode('utf8').replace("'", '"')
+    data = json.loads(res_json)
+    data['tagopssecret'] = uuid.uuid4().hex
+    data['tagopsbucket'] = uuid.uuid4().hex
+    data['password'] = hashlib.md5(data['password'].encode('utf-8')).hexdigest()
+    user_id = db.insert_user(data)
+    if user_id:
+        res = db.get_user(user_id[0])
+        import pdb; pdb.set_trace()
+        context = genrate_dict(USER_FIELDS, res)
+        context['message'] = "User created!"
+        return jsonify(context), 201
+    else:
+        return jsonify({'message':'User not created.'}), 500
 
+
+@app.route("/users/<user_id>", methods=["GET"])
+def user_details(user_id):
+    tagopsBucket, tagopsSecret = authorize(request)
+    res = db.get_user(user_id)
+    response = {}
+    if res:
+        return jsonify(genrate_dict(USER_FIELDS, res)), 200
+    else:
+        return jsonify({'messsage':"No data found"}), 200
 
 
 app.run(host="0.0.0.0", port=5000)
