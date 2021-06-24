@@ -14,7 +14,7 @@ db = DB()
 LIMIT = 10
 OFFSET = 0
 TAG_FIELDS = ["id", "created", "jval", "val", "usersecret", "userbucket"]
-USER_FIELDS = ["id", "email", "tagopssecret", "tagopsbucket", "created"]
+USER_FIELDS = ["id", "email", "created"]
 
 
 def authorize(request):
@@ -94,7 +94,6 @@ def create_user():
     user_id = db.insert_user(data)
     if user_id:
         res = db.get_user(user_id[0])
-        import pdb; pdb.set_trace()
         context = genrate_dict(USER_FIELDS, res)
         context['message'] = "User created!"
         return jsonify(context), 201
@@ -111,6 +110,38 @@ def user_details(user_id):
         return jsonify(genrate_dict(USER_FIELDS, res)), 200
     else:
         return jsonify({'messsage':"No data found"}), 200
+
+
+@app.route("/users/<user_id>", methods=["PATCH"])
+def user_update(user_id):
+    tagopsBucket, tagopsSecret = authorize(request)
+    res_json = request.data.decode('utf8').replace("'", '"')
+    data = json.loads(res_json)
+    data['password'] = hashlib.md5(data['password'].encode('utf-8')).hexdigest()
+    res = db.update_user(user_id, data)
+    if res:
+        res = db.get_user(user_id[0])
+        context = genrate_dict(USER_FIELDS, res)
+        context['message'] = "User Updated!"
+        return jsonify(context), 201
+    else:
+        return jsonify({'message':'Something is missing!'}), 500
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    tagopsBucket, tagopsSecret = authorize(request)
+    res_json = request.data.decode('utf8').replace("'", '"')
+    data = json.loads(res_json)
+    data['password'] = hashlib.md5(data['password'].encode('utf-8')).hexdigest()
+    res = db.login(data)
+    if res:
+        res = db.get_user(res[0])
+        context = genrate_dict(USER_FIELDS, res)
+        context['message'] = "Successfully Loggedin!"
+        return jsonify(context), 200
+    else:
+        return jsonify({'message': 'Email or password not matched!'}), 401
 
 
 app.run(host="0.0.0.0", port=5000)

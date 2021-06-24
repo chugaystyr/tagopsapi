@@ -55,8 +55,22 @@ class DB:
 			print(str(e))
 		return False
 
+	def update_user(self, user_id, data):
+		query = f"""UPDATE users SET password='{data['password']}' WHERE id={user_id}"""
+		cur = self.conn.cursor()
+		cur.execute(query)
+		self.conn.commit()
+		return True
+
 	def get_user(self, user_id):
-		query = f"""SELECT id, email, tagopssecret, tagopsbucket, created from users where id = {int(user_id)}"""
+		query = f"""SELECT id, email, created from users where id = {int(user_id)}"""
+		cur = self.conn.cursor()
+		cur.execute(query)
+		res = cur.fetchone()
+		return res
+
+	def login(self, data):
+		query = f"""SELECT id, email, created from users where email = '{data['email']}' and password='{data['password']}'"""
 		cur = self.conn.cursor()
 		cur.execute(query)
 		res = cur.fetchone()
