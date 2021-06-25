@@ -30,14 +30,17 @@ curl --location --request GET 'localhost:5000/users/4' --header 'TagopsSecret: 1
 curl --location --request PATCH 'localhost:5000/users/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json' --data '{"password": "password"}'
 
 
-curl --location --request POST 'localhost:5000/login' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'  --data '{"email":"test@test.com", "password":"password"}'
+curl --location --request POST 'localhost:5000/login' --header 'Content-Type: application/json'  --data '{"email":"test@test.com", "password":"password"}'
+
+
+curl --location --request POST 'localhost:5000/login' --header 'Content-Type: application/json'  --data '{"email":"test7@test.com", "password":"password"}'
 
 
 
+curl --location --request GET 'localhost:5000/user/tags?limit=1&offset=2' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
 
-
-
+curl --location --request GET 'localhost:5000/users/4' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
 
 

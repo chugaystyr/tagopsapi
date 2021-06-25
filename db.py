@@ -18,7 +18,7 @@ class DB:
 
 	def inset(self, tagopsSecret, tagopsBucket, data):
 		now = datetime.now().strftime("%Y-%m-%d")
-		query = f"""INSERT INTO tags (created, jval, val, usersecret, userbucket) VALUES ('{now}', '{json.dumps(data['jval'])}', '{data['val']}', {tagopsSecret}, '{tagopsBucket}') RETURNING id;"""
+		query = f"""INSERT INTO tags (created, jval, val, usersecret, userbucket) VALUES ('{now}', '{json.dumps(data['jval'])}', '{data['val']}', '{tagopsSecret}', '{tagopsBucket}') RETURNING id;"""
 		cur = self.conn.cursor()
 		try:
 			cur.execute(query)
@@ -30,14 +30,14 @@ class DB:
 		return False
 
 	def get_tag(self, tag_id):
-		query = f"""SELECT * from tags where id = {int(tag_id)} and userbucket={self.buked_id}"""
+		query = f"""SELECT id, created, jval, val from tags where id = {int(tag_id)} and userbucket='{self.buked_id}'"""
 		cur = self.conn.cursor()
 		cur.execute(query)
 		res = cur.fetchone()
 		return res
 	
 	def get_tag_list(self, limit=10, offset=0):
-		query = f"""SELECT * from tags WHERE userbucket={self.buked_id} OFFSET {offset} LIMIT {limit}"""
+		query = f"""SELECT id, created, jval, val from tags WHERE userbucket='{self.buked_id}' OFFSET {offset} LIMIT {limit}"""
 		cur = self.conn.cursor()
 		cur.execute(query)
 		return cur.fetchall()
@@ -63,7 +63,7 @@ class DB:
 		return True
 
 	def get_user(self, user_id):
-		query = f"""SELECT id, email, created from users where id = {int(user_id)}"""
+		query = f"""SELECT id, email, created, tagopssecret, tagopsbucket from users where id = {int(user_id)}"""
 		cur = self.conn.cursor()
 		cur.execute(query)
 		res = cur.fetchone()

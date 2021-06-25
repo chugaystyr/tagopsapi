@@ -13,9 +13,17 @@ app = Flask(__name__)
 db = DB()
 LIMIT = 10
 OFFSET = 0
-TAG_FIELDS = ["id", "created", "jval", "val", "usersecret", "userbucket"]
-USER_FIELDS = ["id", "email", "created"]
+TAG_FIELDS = ["id", "created", "jval", "val"]
+USER_FIELDS = ["id", "email", "created", "tagopssecret", "tagopsbucket"]
 
+
+class Tags:
+
+    def __init__(self):
+        self.tagopsSecret = None
+        self.tagopsBucket = None
+
+tags = Tags()
 
 def authorize(request):
     if not 'TagopsSecret' in request.headers or not 'TagopsBucket' in request.headers :
@@ -24,8 +32,8 @@ def authorize(request):
     tagopsSecret = request.headers.get("TagopsSecret")
     tagopsBucket = request.headers.get("TagopsBucket")
 
-    abort(401) if not tagopsBucket or int(tagopsBucket) != 123 else ''
-    abort(401) if not tagopsSecret or int(tagopsSecret) != 123 else ''
+    abort(401) if not tagopsBucket or tagopsBucket != tags.tagopsBucket else ''
+    abort(401) if not tagopsSecret or tagopsSecret != tags.tagopsSecret else ''
     db.buked_id = tagopsBucket
     return  tagopsBucket, tagopsSecret
 
@@ -35,7 +43,7 @@ def create_tag():
     tagopsBucket, tagopsSecret = authorize(request)
     res_json = request.data.decode('utf8').replace("'", '"')
     data = json.loads(res_json)
-    tag_id = db.inset(int(tagopsSecret), int(tagopsBucket), data)
+    tag_id = db.inset(tagopsSecret, tagopsBucket, data)
     if tag_id:
         res = db.get_tag(tag_id[0])
         context = genrate_dict(TAG_FIELDS, res)
@@ -63,7 +71,6 @@ def tag_list():
     limit = request.args.get("limit", LIMIT)
     offset = request.args.get("offset", OFFSET)
     rows = db.get_tag_list(limit, offset)
-    print(rows)
     response_list = []
     for row in rows:
         response_list.append(genrate_dict(TAG_FIELDS, row))
@@ -75,8 +82,8 @@ def tag_list():
 
 def genrate_dict(fields, row):
     _dict = {}
-    if len(fields) != len(row):
-        return
+    # if len(fields) != len(row):
+    #     return
     
     for index in range(len(fields)):
         _dict[fields[index]] = row[index] if row[index] else ''
@@ -130,13 +137,14 @@ def user_update(user_id):
 
 @app.route("/login", methods=["POST"])
 def login():
-    tagopsBucket, tagopsSecret = authorize(request)
     res_json = request.data.decode('utf8').replace("'", '"')
     data = json.loads(res_json)
     data['password'] = hashlib.md5(data['password'].encode('utf-8')).hexdigest()
     res = db.login(data)
     if res:
         res = db.get_user(res[0])
+        tags.tagopsSecret = res[3]
+        tags.tagopsBucket = res[4]
         context = genrate_dict(USER_FIELDS, res)
         context['message'] = "Successfully Loggedin!"
         return jsonify(context), 200
