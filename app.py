@@ -5,16 +5,13 @@ from db import DB
 import json
 import uuid
 import hashlib
+from config import *
 
 
 app = Flask(__name__)
 
 # create database object
 db = DB()
-LIMIT = 10
-OFFSET = 0
-TAG_FIELDS = ["id", "created", "jval", "val"]
-USER_FIELDS = ["id", "email", "created", "tagopssecret", "tagopsbucket"]
 
 
 class Tags:
