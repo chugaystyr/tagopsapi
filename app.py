@@ -23,16 +23,36 @@ class Tags:
 tags = Tags()
 
 def authorize(request):
-    if not 'TagopsSecret' in request.headers or not 'TagopsBucket' in request.headers :
+
+    if 'TagopsSecret' in request.headers and 'TagopsBucket' in request.headers :
+            validate(request)
+            tagopsSecret = request.headers.get("TagopsSecret")
+            tagopsBucket = request.headers.get("TagopsBucket")
+
+    elif tags.tagopsSecret and tags.tagopsBucket:
+            tagopsSecret = tags.tagopsSecret
+            tagopsBucket = tags.tagopsBucket
+    else:
         abort(401)
 
-    tagopsSecret = request.headers.get("TagopsSecret")
-    tagopsBucket = request.headers.get("TagopsBucket")
-
-    abort(401) if not tagopsBucket or tagopsBucket != tags.tagopsBucket else ''
-    abort(401) if not tagopsSecret or tagopsSecret != tags.tagopsSecret else ''
     db.buked_id = tagopsBucket
     return  tagopsBucket, tagopsSecret
+
+
+def validate(request):
+    tagopsSecret = request.headers.get("TagopsSecret")
+    tagopsBucket = request.headers.get("TagopsBucket")
+    user_id = 0
+    url = request.url.split('/')
+    if (len(url) == 5) and (url[::-1][1] == 'users'):
+        user_id = int(url[::-1][0])
+    res = db.validate_tokens(tagopsSecret, tagopsBucket, user_id)
+    if(res):
+        tags.tagopsSecret = res[3]
+        tags.tagopsBucket = res[4]
+        return True
+    else:
+        abort(401)
 
 
 @app.route("/tag", methods=["POST"])

@@ -70,7 +70,17 @@ class DB:
 		return res
 
 	def login(self, data):
-		query = f"""SELECT id, email, created from users where email = '{data['email']}' and password='{data['password']}'"""
+		query = f"""SELECT id, email, created, tagopssecret, tagopsbucket from users where email = '{data['email']}' and password='{data['password']}'"""
+		cur = self.conn.cursor()
+		cur.execute(query)
+		res = cur.fetchone()
+		return res
+
+	def validate_tokens(self, tagopsSecret, tagopsBucket, user_id):
+		where = f""" AND id='{user_id}'"""
+		query = f"""SELECT id, email, created, tagopssecret, tagopsbucket from users where tagopssecret = '{tagopsSecret}' and tagopsbucket='{tagopsBucket}'"""
+		if user_id:
+			query += where
 		cur = self.conn.cursor()
 		cur.execute(query)
 		res = cur.fetchone()

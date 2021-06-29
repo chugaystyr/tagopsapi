@@ -4,30 +4,32 @@
 
 
 
-curl --location --request POST 'localhost:5000/tag' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json' --data '{"jval":{"test":1}, "val": "some text"}'
+curl --location --request POST 'localhost:5000/tag' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json' --data '{"jval":{"test":1}, "val": "some text"}'
 
 
-curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
 
-curl --location --request GET 'localhost:5000/user/tags' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+curl --location --request GET 'localhost:5000/user/tags' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
 
-curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+curl --location --request GET 'localhost:5000/tag/4' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
 
-curl --location --request GET 'localhost:5000/user/tags?limit=1&offset=2' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+curl --location --request GET 'localhost:5000/user/tags?limit=1&offset=2' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
 
 curl --location --request POST 'localhost:5000/users' --header 'Content-Type: application/json'  --data '{"email":"test@test.com", "password":"password"}'
 
 {'id': 7, 'email': 'test7@test.com', 'tagopssecret': '29831127367749349967d6e305eeae77', 'tagopsbucket': 'de72bff6732c4074826c4c2c2c4cf20a', 'created': datetime.datetime(2021, 6, 23, 0, 0)}
 
+{"created":"Tue, 29 Jun 2021 00:00:00 GMT","email":"test@test.com","id":8,"message":"User created!","tagopsbucket":"1d0e4512c6f54b8a9053744869f90004","tagopssecret":"260d909ac35546e5b4cdcb1e8f814c87"}
 
-curl --location --request GET 'localhost:5000/users/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json'
+
+curl --location --request GET 'localhost:5000/users/4' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
 
-curl --location --request PATCH 'localhost:5000/users/4' --header 'TagopsSecret: 123' --header 'TagopsBucket: 123' --header 'Content-Type: application/json' --data '{"password": "password"}'
+curl --location --request PATCH 'localhost:5000/users/4' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json' --data '{"password": "password"}'
 
 
 curl --location --request POST 'localhost:5000/login' --header 'Content-Type: application/json'  --data '{"email":"test@test.com", "password":"password"}'
