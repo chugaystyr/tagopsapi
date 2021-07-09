@@ -44,5 +44,3 @@ curl --location --request GET 'localhost:5000/user/tags?limit=1&offset=2' --head
 
 curl --location --request GET 'localhost:5000/users/4' --header 'TagopsSecret: 29831127367749349967d6e305eeae77' --header 'TagopsBucket: de72bff6732c4074826c4c2c2c4cf20a' --header 'Content-Type: application/json'
 
-
-

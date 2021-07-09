@@ -169,4 +169,17 @@ def login():
         return jsonify({'message': 'Email or password not matched!'}), 401
 
 
-app.run(host="0.0.0.0", port=5000)
+@app.route("/is_email_exists", methods=["GET"])
+def is_email_exists():
+    res_json = request.data.decode('utf8').replace("'", '"')
+    data = json.loads(res_json)
+    email = data['email']
+    res = db.is_email_exists(email)
+    response = {}
+    if res:
+        return jsonify({'is_exists': True}), 200
+    else:
+        return jsonify({'is_exists': False}), 200
+
+
+app.run(host="0.0.0.0", port=5500)

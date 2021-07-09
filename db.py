@@ -69,6 +69,13 @@ class DB:
 		res = cur.fetchone()
 		return res
 
+	def is_email_exists(self, email):
+		query = f"""SELECT id, email, created, tagopssecret, tagopsbucket from users where email = '{email}'"""
+		cur = self.conn.cursor()
+		cur.execute(query)
+		res = cur.fetchone()
+		return res
+
 	def login(self, data):
 		query = f"""SELECT id, email, created, tagopssecret, tagopsbucket from users where email = '{data['email']}' and password='{data['password']}'"""
 		cur = self.conn.cursor()
