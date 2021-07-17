@@ -42,6 +42,12 @@ class DB:
 		cur.execute(query)
 		return cur.fetchall()
 
+	def get_tag_stats(self, limit=10, offset=0):
+		query = f"""SELECT val, COUNT(val) as total, created from tags WHERE userbucket='{self.buked_id}' AND created > current_date - interval '7 days' GROUP BY val, created OFFSET {offset} LIMIT {limit}"""
+		cur = self.conn.cursor()
+		cur.execute(query)
+		return cur.fetchall()
+
 	def insert_user(self, data):
 		now = datetime.now().strftime("%Y-%m-%d")
 		query = f"""INSERT INTO users (email, password, tagopssecret, tagopsbucket, created) VALUES ('{data["email"]}', '{data["password"]}', '{data["tagopssecret"]}', '{data["tagopsbucket"]}', '{now}') RETURNING id;"""

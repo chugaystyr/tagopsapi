@@ -182,4 +182,28 @@ def is_email_exists():
         return jsonify({'is_exists': False}), 200
 
 
-app.run(host="0.0.0.0", port=5500)
+@app.route("/user/stats", methods=["GET"])
+def tag_stats():
+    tagopsBucket, tagopsSecret = authorize(request)
+    limit = request.args.get("limit", LIMIT)
+    offset = request.args.get("offset", OFFSET)
+    rows = db.get_tag_stats(limit, offset)
+    response_list = {}
+
+    for title, total, created in rows:
+        if title in response_list:
+            response_list[title].append({str(created): total})
+        else:
+            response_list[title] = [{str(created): total}]
+        # tmp = {}
+        # tmp[title] = {str(created): total}
+        # response_list.append(tmp)
+
+    print(response_list)
+    if len(response_list):
+        return jsonify(response_list), 200
+    else:
+        return jsonify({'messsage':"No data found"}), 200
+
+
+app.run(host="0.0.0.0", port=5500, debug=True, use_reloader=True)
